@@ -1,0 +1,41 @@
+server.port: 8081
+
+spring.rabbitmq:
+  addresses: localhost
+  username: user
+  password: bitnami
+
+# routing을 사용하기 위해서는 binding명을 functionRouter로 해줘야 함.
+# functionRouter에 여러 topic지정가능(,로 구분. 공백 넣으면 안된다...)
+
+spring.cloud.function:
+  definition: functionRouter
+  routing-expression: headers['type']
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+  default.contentType: application/json
+  bindings:
+    foobar-out-0:
+      destination: foobar-topic
+      producer:
+        required-groups: auditGroup
+
+    lynryd-out-0:
+      destination: lynryd-topic
+      producer:
+        required-groups: auditGroup
+
+    functionRouter-in-0:
+      destination: foobar-topic,lynryd-topic
+      group: mygroup
+      consumer:
+        maxAttempts: 3
+        backOffInitialInterval: 500
+        backOffMaxInterval: 1000
+        backOffMultiplier: 2.0
+
+
+spring.cloud.stream.rabbit.bindings.functionRouter-in-0.consumer:
+  autoBindDlq: true
+  republishToDlq: true
