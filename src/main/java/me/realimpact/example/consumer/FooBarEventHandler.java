@@ -9,6 +9,8 @@ import me.realimpact.example.service.SCSTExampleConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+
 import java.util.function.Consumer;
 
 @Slf4j
@@ -23,16 +25,18 @@ public class FooBarEventHandler {
   }
   
   @Bean
-  public Consumer<FooCreated> fooCreated() {
+  public Consumer<Message<FooCreated>> fooCreated() {
     return fooCreated -> {
-      scstExampleConsumerService.applyFooCreated(fooCreated).block();
+      log.info("header type : " + fooCreated.getHeaders().get("type"));
+      scstExampleConsumerService.applyFooCreated(fooCreated.getPayload()).block();
     };
   }
   
   @Bean
-  public Consumer<BarCreated> barCreated() {
+  public Consumer<Message<BarCreated>> barCreated() {
     return barCreated -> {
-      scstExampleConsumerService.applyBarCreated(barCreated).block();
+      log.info("header type : " + barCreated.getHeaders().get("type"));
+      scstExampleConsumerService.applyBarCreated(barCreated.getPayload()).block();
     };
   }
 }

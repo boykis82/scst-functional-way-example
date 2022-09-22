@@ -7,6 +7,7 @@ import me.realimpact.example.service.SCSTExampleConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import java.util.function.Consumer;
 
@@ -22,16 +23,18 @@ public class LynRydEventHandler {
   }
   
   @Bean
-  public Consumer<LynCreated> lynCreated() {
+  public Consumer<Message<LynCreated>> lynCreated() {
     return lynCreated -> {
-      scstExampleConsumerService.applyLynCreated(lynCreated).block();
+      log.info("header type : " + lynCreated.getHeaders().get("type"));
+      scstExampleConsumerService.applyLynCreated(lynCreated.getPayload()).block();
     };
   }
   
   @Bean
-  public Consumer<RydCreated> rydCreated() {
+  public Consumer<Message<RydCreated>> rydCreated() {
     return rydCreated -> {
-      scstExampleConsumerService.applyRydCreated(rydCreated).block();
+      log.info("header type : " + rydCreated.getHeaders().get("type"));
+      scstExampleConsumerService.applyRydCreated(rydCreated.getPayload()).block();
     };
   }
 }
