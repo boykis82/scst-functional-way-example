@@ -1,9 +1,9 @@
 server.port: 8081
 
-spring.rabbitmq:
-  addresses: localhost
-  username: user
-  password: bitnami
+#spring.rabbitmq:
+#  addresses: localhost
+#  username: user
+#  password: bitnami
 
 # routing을 사용하기 위해서는 binding명을 functionRouter로 해줘야 함.
 # functionRouter에 여러 topic지정가능(,로 구분. 공백 넣으면 안된다...)
@@ -12,8 +12,16 @@ spring.cloud.function:
   definition: functionRouter
   routing-expression: headers['type']
 
+spring.kafka.bootstrap-servers: 127.0.0.1:9093
+
 spring.cloud.stream:
-  defaultBinder: rabbit
+  #defaultBinder: rabbit
+  defaultBinder: kafka
+  kafka:
+    binder:
+      brokers: 127.0.0.1
+      defaultBrokerPort: 9093
+      replication-factor: 1
   default.contentType: application/json
   bindings:
     foobar-out-0:
@@ -36,6 +44,6 @@ spring.cloud.stream:
         backOffMultiplier: 2.0
 
 
-spring.cloud.stream.rabbit.bindings.functionRouter-in-0.consumer:
-  autoBindDlq: true
-  republishToDlq: true
+#spring.cloud.stream.rabbit.bindings.functionRouter-in-0.consumer:
+#  autoBindDlq: true
+#  republishToDlq: true
